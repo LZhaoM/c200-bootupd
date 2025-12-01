@@ -34,9 +34,24 @@ Radxa Airbox Orin has some additional changes compared to Radxa C200:
 
 The embedded device tree and MB1 BCT Pinmux have been updated to support those features.
 
-## Development
+## Usage
 
-### Build dependency
+### Flashing with the pre-compiled files
+
+Please first boot the device to [force recovery mode](https://developer.nvidia.com/embedded/learn/jetson-agx-orin-devkit-user-guide/howto.html#force-recovery-mode), then run following commands:
+
+```bash
+wget https://developer.download.nvidia.com/embedded/L4T/r36_Release_v4.3/release/Jetson_Linux_R36.4.3_aarch64.tbz2 -O Jetson_Linux_aarch64.tbz2
+tar -xf Jetson_Linux_aarch64.tbz2
+cd Linux_for_Tegra
+# For Radxa C200 Orin Developer Kit:
+wget https://github.com/radxa/c200-bootupd/releases/latest/download/uefi_jetson_c200.bin -O bootloader/uefi_jetson.bin
+sudo ./flash.sh p3768-0000-p3767-0000-a0-qspi internal
+```
+
+### Compiling from source and flashing
+
+#### Build dependency
 
 Please check [the official NVIDIA build guide](https://github.com/NVIDIA/edk2-nvidia/wiki/Build-with-docker#install-docker).
 
@@ -44,7 +59,7 @@ Additionally, the Linux kernel header should be installed on your system.
 
 NixOS users can run `nix develop` (Flake required) to have a local shell with Linux header configured.
 
-### Build
+#### Build
 
 Please run following commands:
 
@@ -54,7 +69,7 @@ make build
 
 The generated binary is located under `c200/images/uefi_Jetson_RELEASE.bin`.
 
-### Flash
+#### Flash
 
 First, boot the device to [force recovery mode](https://developer.nvidia.com/embedded/learn/jetson-agx-orin-devkit-user-guide/howto.html#force-recovery-mode). Then run following commands:
 
