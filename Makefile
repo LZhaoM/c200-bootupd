@@ -98,7 +98,7 @@ clean:
 		$(MAKE) -C Linux_for_Tegra/source nvidia-dtbs-clean
 
 distclean: clean
-	./edk2_docker edkrepo clean
+	cd c200 && ./../edk2_docker edkrepo clean
 	./edk2_docker edkrepo manifest-repos remove nvidia
 	rm -rf c200/ Linux_for_Tegra Jetson_Linux_R$(RELEASE)_aarch64.tbz2
 
