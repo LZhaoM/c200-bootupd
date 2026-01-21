@@ -17,6 +17,8 @@ VARIANT ?= RELEASE
 # See https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/index.html#devices-supported-by-this-document
 BOARDSKU ?= 0001
 
+RELEASE := 36.4.4
+
 # After compiling the modified dts file, the dtb file will appear under
 # `Linux_for_Tegra/source/kernel-devicetree/generic-dts/`, we need to put the
 # dtb file under `Linux_for_Tegra/kernel/dtb/` where it will get picked up by
@@ -48,7 +50,7 @@ c200/edk2-nvidia/Platform/NVIDIA/$(PROFILE)/build.sh c200/edk2-nvidia/Silicon/NV
 	rm -rf c200
 	./edk2_docker init_edkrepo_conf
 	./edk2_docker edkrepo manifest-repos add nvidia https://github.com/NVIDIA/edk2-edkrepo-manifest.git main nvidia || true
-	./edk2_docker edkrepo clone c200 NVIDIA-Platforms r36.4.3
+	./edk2_docker edkrepo clone c200 NVIDIA-Platforms r$(RELEASE)
 	cd c200/edk2-nvidia && git am --keep-cr $(PATCHES)/edk2-nvidia/*
 
 $(BUILD_OUTPUT): c200/edk2-nvidia/Platform/NVIDIA/$(PROFILE)/build.sh c200/edk2-nvidia/Silicon/NVIDIA/Drivers/TegraPlatformBootManager/TegraPlatformBootManagerDxe.c
@@ -63,10 +65,10 @@ Linux_for_Tegra/bootloader/generic/BCT/tegra234-mb1-bct-pinmux-p3767-dp-a03.dtsi
 Linux_for_Tegra/bootloader/tegra234-mb1-bct-gpio-p3767-dp-a03.dtsi \
 Linux_for_Tegra/bootloader/generic/BCT/tegra234-mb1-bct-padvoltage-p3767-dp-a03.dtsi
 
-Jetson_Linux_R36.4.3_aarch64.tbz2:
-	wget https://developer.download.nvidia.com/embedded/L4T/r36_Release_v4.3/release/$@
+Jetson_Linux_R$(RELEASE)_aarch64.tbz2:
+	wget https://developer.download.nvidia.com/embedded/L4T/r36_Release_v4.4/release/$@
 
-Linux_for_Tegra/flash.sh Linux_for_Tegra/source/source_sync.sh &: Jetson_Linux_R36.4.3_aarch64.tbz2
+Linux_for_Tegra/flash.sh Linux_for_Tegra/source/source_sync.sh &: Jetson_Linux_R$(RELEASE)_aarch64.tbz2
 	tar xmf $<
 
 .PHONY: Linux_for_Tegra/bootloader/uefi_jetson.bin
@@ -98,11 +100,11 @@ clean:
 distclean: clean
 	./edk2_docker edkrepo clean
 	./edk2_docker edkrepo manifest-repos remove nvidia
-	rm -rf c200/ Linux_for_Tegra Jetson_Linux_R36.4.3_aarch64.tbz2
+	rm -rf c200/ Linux_for_Tegra Jetson_Linux_R$(RELEASE)_aarch64.tbz2
 
 $(DTS_PATH): Linux_for_Tegra/source/source_sync.sh
 	cd Linux_for_Tegra/source/ && \
-	./source_sync.sh -k jetson_36.4.3
+	./source_sync.sh -k jetson_$(RELEASE)
 	# Apply the patches if the patch directory exists
 	if [ -d $(PATCHES)/t23x-public-dts/$(PRODUCT) ]; then \
 		cd Linux_for_Tegra/source/hardware/nvidia/t23x/nv-public;  \
